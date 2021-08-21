@@ -65,10 +65,11 @@ def load_data(messages_filepath,
                   right_index=True, 
                   how='left')
     
-    #later adjusts aftter merging
+    #later adjusts after merging
     df = df.set_index('id_x')
     df = df.drop(columns='id_y')
     df.index.name = 'id'
+    df.name = 'df'
     
     if verbose:
         print('merged dataset has {} rows and {} columns'.format(df.shape[0], 
