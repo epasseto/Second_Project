@@ -10,29 +10,29 @@ This project is about building a **Machine Learning Pipeline**. The objective of
 
 The project is divided in two main parts. And the files involded are listed below.
 
-`udacourse2.py` $/righhtarrow/ python 3 code, as a library of useful functions for both parts
+`udacourse2.py` $/righhtarrow$ python 3 code, as a library of useful functions for both parts
 
 The **first** one, is an ETL (Extract, Transform, Load) for taking a .csv file, rearrange the data in classes and save the data corrected data into SQLite format, as a Database Table named Messages.
 
 `messages.csv` $/righhtarrow/ file containing the raw data to be processed
 
-`process_data.py` $/righhtarrow/ Python 3 code, with whe ETL functions
+`process_data.py` $/righhtarrow$ Python 3 code, with whe ETL functions
 
-`ETL Pipeline Preparation.ipynb` $/righhtarrow/ Jupyter Notebook containing all the steps for building the ETL
+`ETL Pipeline Preparation.ipynb` $/righhtarrow$ Jupyter Notebook containing all the steps for building the ETL
 
-`ETL Pipeline Testing.ipynb` $/righhtarrow/ Jupyter Notebook for calling and testing `process_data.py` functions
+`ETL Pipeline Testing.ipynb` $/righhtarrow$ Jupyter Notebook for calling and testing `process_data.py` functions
 
 The **second** part is a Machine Learning Pipeline for reading the data on SQLlite format, preprocess it, tokenize, prepare the data and train a Machine Learning Classifier. 
 
-`Messages.db` $/righhtarrow/ file containing the preprocessed data for Machine Learning training
+`Messages.db` $/righhtarrow$ file containing the preprocessed data for Machine Learning training
 
-`train_classifier.py` $/righhtarrow/ Python 3 code, with the Train Classifief functions
+`train_classifier.py` $/righhtarrow$ Python 3 code, with the Train Classifief functions
 
-`ML Pipeline Preparation.ipynb`$/righhtarrow/ Jupyter Notebook documenting all the steps for building the Machine Learning Pipeline
+`ML Pipeline Preparation.ipynb`$/righhtarrow$ Jupyter Notebook documenting all the steps for building the Machine Learning Pipeline
 
-`ML Pipeline Condensing.ipynb`$/righhtarrow/ Jupyter Notebook for condensation of all the steps from `ML Pipeline Preparation.ipynb`, in order to turn it into useful functions
+`ML Pipeline Condensing.ipynb`$/righhtarrow$ Jupyter Notebook for condensation of all the steps from `ML Pipeline Preparation.ipynb`, in order to turn it into useful functions
 
-`ML Pipeline Testing.ipynb`$/righhtarrow/ Jupyter Notebook for calling and testing `train_classifier.py` functions
+`ML Pipeline Testing.ipynb`$/righhtarrow$ Jupyter Notebook for calling and testing `train_classifier.py` functions
 
 ---
 
@@ -79,6 +79,8 @@ Versions:
 - 1.18c update: for Linear Support Vector Machine letting the tokenizer take the same word more than once
 - 1.18d update: now my Classifier was changed to Linear SVC. The explanations for my choice rests above
 
+- 1.19 update: not removing anymore any column and preserving 36 columns at the Labels dataset
+ 
 ##### This project is under MIT Licence
  
 "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code."
