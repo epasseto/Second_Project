@@ -10,7 +10,7 @@ This project is about building a **Machine Learning Pipeline**. The objective of
 
 The project is divided in two main parts. And the files involded are listed below.
 
-`udacourse2.py` $/righhtarrow$ python 3 code, as a library of useful functions for both parts
+`udacourse2.py` $\righhtarrow$ python 3 code, as a library of useful functions for both parts
 
 The **first** one, is an ETL (Extract, Transform, Load) for taking a .csv file, rearrange the data in classes and save the data corrected data into SQLite format, as a Database Table named Messages.
 
