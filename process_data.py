@@ -4,8 +4,8 @@ from time import time
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 import math
+import udacourse2
 
-###Main Functions (04)##########################################################
 #########1#########2#########3#########4#########5#########6#########7#########8
 def load_data(messages_filepath, 
               categories_filepath,
@@ -29,12 +29,12 @@ def load_data(messages_filepath,
     begin = time()
     
     #load datasets
-    messages = fn_read_data(filepath=messages_filepath, 
-                            index_col=messages_index, 
-                            verbose=verbose)
-    categories = fn_read_data(filepath=categories_filepath, 
-                              index_col=categories_index, 
-                              verbose=verbose)
+    messages = udacourse2.fn_read_data(filepath=messages_filepath, 
+                                       index_col=messages_index, 
+                                       verbose=verbose)
+    categories = udacourse2.fn_read_data(filepath=categories_filepath, 
+                                         index_col=categories_index, 
+                                         verbose=verbose)
         
     #pre-filter - cleaning duplicates from messages
     #why so earlier? because I turn my dataset lighter, saving time
@@ -65,11 +65,10 @@ def load_data(messages_filepath,
                   right_index=True, 
                   how='left')
     
-    #later adjusts after merging
+    #later adjusts aftter merging
     df = df.set_index('id_x')
     df = df.drop(columns='id_y')
     df.index.name = 'id'
-    df.name = 'df'
     
     if verbose:
         print('merged dataset has {} rows and {} columns'.format(df.shape[0], 
@@ -129,9 +128,10 @@ def clean_data(df,
     filtered_cols.append('if_blank')
     
     #calling the completion function (the treatment!)       
-    df[filtered_cols] = df[filtered_cols].apply(lambda x: fn_test(x, 
-                                                                  verbose=verbose), 
-                                                                      axis=1)
+    df[filtered_cols] = df[filtered_cols]\
+    .apply(lambda x: udacourse2.fn_test(x, 
+                                        verbose=verbose), 
+                                        axis=1)
               
     #dropping old categories column
     df = df.drop('categories', axis=1)
@@ -139,7 +139,7 @@ def clean_data(df,
     #    print(df.head(5))
               
     #check for critical NaN values
-    if fn_check_NaN(df, verbose=verbose):
+    if udacourse2.fn_check_NaN(df, verbose=verbose):
         if verbose:
             print('dataset was checked for NaN and none critical was found')
     else:
@@ -198,25 +198,32 @@ def save_data(df,
         
         #if blank column
         field = 'if_blank'
-        count = fn_count_valids(df=df, field=field, criteria=True)
+        count = udacourse2.fn_count_valids(dataset=df, 
+                                           field=field, 
+                                           criteria=True,
+                                           verbose=verbose)
         percent = 100. * (count / total)
         print('{} column: {} ({:.1f}%)'.format(field, count, percent))
         
+        print()
+        print('Valid labels counting:')
+        udacourse2.fn_labels_report(dataset=df)
+        
         #columns count
-        expand_list = ['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 
-       'security', 'military', 'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 
-       'refugees', 'death', 'other_aid', 'infrastructure_related', 'transport', 'buildings', 'electricity', 'tools', 
-       'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related', 'floods', 'storm', 'fire', 
-       'earthquake', 'cold', 'other_weather', 'direct_report']
+        #expand_list = ['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 
+       #'security', 'military', 'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 
+       #'refugees', 'death', 'other_aid', 'infrastructure_related', 'transport', 'buildings', 'electricity', 'tools', 
+       #'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related', 'floods', 'storm', 'fire', 
+       #'earthquake', 'cold', 'other_weather', 'direct_report']
 
-        total = df.shape[0]
-        counts = []
+        #total = df.shape[0]
+        #counts = []
 
-        for field in expand_list:
-            count = fn_count_valids(df=df, field=field)
-            percent = 100. * (count / total)
-            counts.append((count, field, percent))
-            print('{}: {} ({:.1f}%)'.format(field, count, percent))
+        #for field in expand_list:
+        #    count = fn_count_valids(df=df, field=field)
+        #    percent = 100. * (count / total)
+        #    counts.append((count, field, percent))
+        #    print('{}: {} ({:.1f}%)'.format(field, count, percent))
 
     spent = time() - begin
     if verbose:
@@ -226,27 +233,27 @@ def save_data(df,
     return True
 
 #########1#########2#########3#########4#########5#########6#########7#########8
-def main(messages_filepath, 
-         categories_filepath,
-         database_filepath,
-         messages_index='id',
-         categories_index='id',
-         cat_sepparation=';',
-         verbose=False,
-         add_report=True):
+def run_etl(messages_filepath='messages.csv', 
+            categories_filepath='categories.csv',
+            database_filepath='sqlite:///Messages.db',
+            messages_index='id',
+            categories_index='id',
+            cat_sepparation=';',
+            verbose=False,
+            add_report=True):
     '''This is the main ETL function. It calls the other ones, in the correct
     order. To call it use: 
     Input:
-      - messages_filepath (mandatory) - string - (default='messages.csv') 
-      - categories_filepath (mandatory) - string - (default='categories.csv')
-      - database_filepath (mandatory) - string - (default='sqlite:///Messages.db')
+      - messages_filepath (optional) - textt string (default='messages.csv') 
+      - categories_filepath (optional) - text string (default='categories.csv')
+      - database_filepath (optional) - text string (default='sqlite:///Messages.db')
       - messages_index (optional) - (default='id')
       - categories_index (optional) - (default='id')
       - cat_sepparation (optional) - (default=';')
       - verbose (optional) - if you need some verbosity, turn it on - Boolean 
         (default=False)
-      -add_report (optional) - 
-
+      - add_report (optional) - if you need to add a report on save data - 
+        Boolean (default=False) 
     '''
     if verbose:
         print('###main system function started')
@@ -301,127 +308,98 @@ def main(messages_filepath,
         
     return True
 
-#########1#########2#########3#########4#########5#########6#########7#########8
-if __name__ == '__main__':
-    main()
-
-###System Subfunctions (in alfabetic order) (05)################################
-#########1#########2#########3#########4#########5#########6#########7#########8
-def fn_check_NaN(df, 
-                 verbose=False):
-    '''This function checks your final dataframe for critical NaN
-    (column 'original' may have NaN)
-    Inputs:
-        df (mandatory) - Pandas Dataframe to be checked
-        verbose (optional) - if you want some verbosity (default=False)
-    Output:
-        returns True if the function runned well
-    '''
-    if verbose:
-        print('*check for NaN subfunction started')
-    
-    for column in df.columns:
-        result = df[column].isnull().values.any()
-        if result:
-            if verbose:
-                print('column: {} -> {}'.format(column, result))
-            if column == 'original':
-                if verbose:
-                    print('*original can have NaN, as it refers to foreign languages posting (some cases only)')
-            else:
-                raise Exception('some critical rows with NaN were found in your dataframe')
-                
-    return True
-
-#########1#########2#########3#########4#########5#########6#########7#########8
-def fn_count_valids(df, 
-                    field, 
-                    criteria=1, 
-                    verbose=False):
-    '''This function counts column data for additional report of saved_data
-    Inputs:
-      - df (mandatory) - dataset for stats
-      - field (mandatory) - field to be counted
-      - criteria (optional) - valid cound criteria (default=1)
-      - verbose (optional) - if you want some verbosity (default-False)
-    *Comment: this function was not optimized! It takes only one column per
-     calling. As it is only an optional report that probably will turned off in
-     a prodution system, it don´t matter too much. For future improvement,
-     please consider multicolumns processing for design a new count_valids
-     function
-    '''
-    if verbose:
-        print('*counting subfunction started')
-    
-    return df[field][df[field] == criteria].sum()
-
-#########1#########2#########3#########4#########5#########6#########7#########8
-def fn_read_data(filepath, 
-                 index_col='id',
-                 verbose=False):
-    '''This function reads a .csv file
-    Inputs:
-      - filepath (mandatory) - String containing the full path for the data to
-        oppened
-      - index_col (optional) - String containing the name of the index column
-        (default='id')
-      - verbose (optional) - if you needed some verbosity, turn it on - Boolean 
-        (default=False)
-    Output:
-      - Pandas Dataframe with the data
-    '''
-    if verbose:
-        print('*subfunction read_data started')
-    
-    #reading the file
-    df = pd.read_csv(filepath)
-    df.set_index(index_col)
-    
-    if verbose:
-        print('file readed as Dataframe')
-
-    #testing if Dataframe exists
-    #https://stackoverflow.com/questions/39337115/testing-if-a-pandas-dataframe-exists/39338381
-    if df is not None: 
-        if verbose:
-            print('dataframe created from', filepath)
-            #print(df.head(5))
-    else:
-        raise Exception('something went wrong when acessing .csv file', filepath)
-    
-    #setting a name for the dataframe (I will cound need to use it later!)
-    ###https://stackoverflow.com/questions/18022845/pandas-index-column-title-or-name?rq=1
-    #last_one = filepath.rfind('/')
-    #if last_one == -1: #cut only .csv extension
-    #    df_name = filepath[: -4] 
-    #else: #cut both tails
-    #    df_name = full_path[last_one+1: -4]   
-    #df.index.name = df_name
-    #if verbose:
-    #    print('dataframe index name setted as', df_name)
-
-    return df
-
 #########1#########2#########3#########4#########5#########6#########7#########8              
-def fn_test(x, verbose=False):
-    if verbose:
-        print('###')      
-    string_cat = x['categories']
-    #at least one case found
-    if string_cat.find('1') != -1:
-        #break into components
-        alfa = set(string_cat.split(sep=';'))
-        #loop on components
-        for beta in alfa:
-            if beta.find('1') != -1:
-                if verbose:
-                    print(beta[:-2])
-                gama = beta[:-2]
-                x[gama] = 1
-    #no cases!
+def main(messages_filepath='messages.csv',
+         categories_filepath='categories.csv',
+         database_filepath='sqlite:///Messages.db',
+         messages_index='id',
+         categories_index='id',
+         cat_sepparation=';',
+         verbose=False,
+         add_report=False):
+    '''This is the main ETL Pipeline function. It calls the other 
+    ones, in the correct order.
+    Example: python process_data.py
+      Basic parameters:
+      - messages_filepath - just indicate the complete path after the command 
+        (default:'messages.csv')
+        Example: python process_data.py msgs.csv
+      - categories_filepath - you need to indicate both data_file and classifier
+        (default:'categories.csv')
+        Example: python process_data.py msgs.csv cats.csv
+      - database_filapath - you need to indicate all the three steps
+        (default:'DisasterResponse.db')
+        Example: python process_data.py msgs.csv cats.csv response.db
+      Extra parameters
+      you need to indicate messages, categories and database, in order to use 
+      them. You can use only one, or more, in any order
+      -m -> messages_index - if you want to alter (default='id')
+      -c -> categories_index - if you want to alter (default='id')
+      -s -> cat_sepparation - if you want to alter (default=';')
+      -v -> verbose - if you want verbosity (default=False)
+      -a -> add_report - if you want adittional report (default=False)
+      Examples: python process_data msgs.csv resp.db -m=ID -c=index -s=; -v -a
+      python process_data.py messages.csv disaster_categories.csv DisasterResponse.db
+      
+    '''
+    run_etl(messages_filepath=messages_filepath, 
+            categories_filepath=categories_filepath,
+            database_filepath=database_filepath,
+            messages_index=messages_index,
+            categories_index=categories_index,
+            cat_sepparation=cat_sepparation,
+            verbose=verbose,
+            add_report=add_report) 
+
+if __name__ == '__main__':
+    #parse sys.argv[1:] using optparse or argparse or what have you
+    #https://stackoverflow.com/questions/14500183/in-python-can-i-call-the-main-of-an-imported-module
+    #main(foovalue, barvalue, **dictofoptions)
+    
+    #first, try to get the system arguments
+    args = sys.argv[1:]
+    print('args:', args)
+
+    #second, try to charge with the three main arguments
+    if len(args) == 0: #python process_data
+        main()
+    elif len(args) == 1: #python process_data messages.csv
+        main(messages_filepath=args[0])
+    elif len(args) == 2: #python process_data messages.csv categories.csv
+        main(messages_filepath=args[0],
+             categories_filepath=args[1])
+    elif len(args) == 3: #ython process_data messages.csv categories.csv sqlite:///Messages.db
+        main(messages_filepath=args[0],
+             categories_filepath=args[1],
+             database_filepath=args[2])
     else:
-        if verbose:
-            print('*empty element*')
-        x['if_blank'] = True
-                      
-    return x
+        messages_index='id'
+        categories_index='id'
+        cat_sepparation=';'
+        verbose=False
+        add_report=False
+
+        remain_args = args[3:] #three main args    
+        for arg in remain_args:
+            comm = arg[:2] #get the command part
+            if comm == '-m':
+                messages_index = arg[3:]
+            elif comm == '-c':
+                categories_index = arg[3:]
+            elif comm == '-s':
+                cat_sepparation = arg[3:]
+            elif comm == '-v':
+                verbose=True
+            elif comm == '-a':
+                add_report=True
+            else:
+                raise Exception('invalid argument')
+                
+        main(messages_filepath=args[0], #full calling
+             categories_filepath=args[1],
+             database_filepath=args[2],
+             messages_index=messages_index,
+             categories_index=categories_index,
+             cat_sepparation=cat_sepparation,
+             verbose=verbose,
+             add_report=add_report)
