@@ -56,21 +56,19 @@ The original projec have the following structure (you can find it at Udacity Dat
 
 >- app
 >>- template
->>>- master.html  # main page of web app
->>>- go.html  # classification result page of web app
->>- run.py  # Flask file that runs app
-
+>>>- master.html  ← main page of web app
+>>>- go.html  ← classification result page of web app
+>>- run.py  ← Flask file that runs app
 >- data
->>- disaster_categories.csv  # data to process (equivalent to categories.csv)
->>- disaster_messages.csv  # data to process (equivalent to messages.csv)
+>>- disaster_categories.csv  ← data to process (equivalent to categories.csv)
+>>- disaster_messages.csv  ← data to process (equivalent to messages.csv)
 >>- process_data.py (our ETL pipeline)
 >>- udacourse2.py (supporting library)
->>- InsertDatabaseName.db   # database to save clean data to (equivalent to Messages.db)
-
+>>- InsertDatabaseName.db   ← database to save clean data to (equivalent to Messages.db)
 >- models
 >>- train_classifier.py (our Classifier pipeline) 
 >>- udacourse2.py (supporting library)
->>- classifier.pkl  # saved model (equivalent to model.pkl)
+>>- classifier.pkl  ← saved model (equivalent to model.pkl)
 
 - README.md (our README file)
 
