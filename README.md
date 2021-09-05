@@ -54,23 +54,23 @@ The main files are `process_data.py` and `train_classifier.py`. The idea is to r
 
 The original projec have the following structure (you can find it at Udacity Data Science Course at the [link](https://classroom.udacity.com/nanodegrees/nd025/parts/ba5d2f25-63d2-4db8-afb1-7a37dd792b4a/modules/1112326c-bdb1-4119-b907-4098a0e4277d/lessons/743ff0a6-7500-4de6-8477-ea822eeda8b8/concepts/6f0d69e6-1f5e-413e-8176-6b80a9bc8ad3) - perhaps you need autorization to access this area
 
-- app
-| - template
-| |- master.html  # main page of web app
-| |- go.html  # classification result page of web app
-|- run.py  # Flask file that runs app
+>- app
+>>- template
+>>>- master.html  # main page of web app
+>>>- go.html  # classification result page of web app
+>>- run.py  # Flask file that runs app
 
-- data
-|- disaster_categories.csv  # data to process (equivalent to categories.csv)
-|- disaster_messages.csv  # data to process (equivalent to messages.csv)
-|- process_data.py (our ETL pipeline)
-|- udacourse2.py (supporting library)
-|- InsertDatabaseName.db   # database to save clean data to (equivalent to Messages.db)
+>- data
+>>- disaster_categories.csv  # data to process (equivalent to categories.csv)
+>>- disaster_messages.csv  # data to process (equivalent to messages.csv)
+>>- process_data.py (our ETL pipeline)
+>>- udacourse2.py (supporting library)
+>>- InsertDatabaseName.db   # database to save clean data to (equivalent to Messages.db)
 
-- models
-|- train_classifier.py (our Classifier pipeline) 
-|- udacourse2.py (supporting library)
-|- classifier.pkl  # saved model (equivalent to model.pkl)
+>- models
+>>- train_classifier.py (our Classifier pipeline) 
+>>- udacourse2.py (supporting library)
+>>- classifier.pkl  # saved model (equivalent to model.pkl)
 
 - README.md (our README file)
 
