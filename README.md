@@ -1,6 +1,6 @@
-# SecondProject
+# Second Project
 
-## Second Udacity Project
+## Disaster Response Pipeline
 
 This project is about building a **Machine Learning Pipeline**. The objective of this Pipeline is to automatically classify short messages (as Tweeter), in 36 different predefined categories (labels) for **Disaster Report**. This is the second part of **Udacity Data Science** nanodegree.
 
@@ -143,7 +143,13 @@ Project started at 05/2021
 
 Versions:
 
-- 0.1 Alfa - 1.2 update: small model improvement
+- 0.1..0.9 Alfa: incomplete releases
+
+- 1.0 update: ETL Pipeline now is complete!
+
+- 1.1 update: new parameters for ETL, Pipeline now can run under Terminal calling
+
+- 1.2 update: small ETL model improvement
 
 - 1.3 update: pre-tokenizer (a premature tokenization strategy) created, for removing untrainable rows
 
@@ -183,18 +189,24 @@ Versions:
 - 1.18d update: now my Classifier was changed to Linear SVC. The explanations for my choice rests above
 
 - 1.19 update: not removing anymore any column and preserving 36 columns at the Labels dataset
+
+- 1.20a update: after running GridSearch on Adaboost
+- 1.20b update: after running GridSearch on Adaboost, I could make some parameters testing
+
+- 1.21 update: for preventing pipeline leakage using Picke, I modified train_data for having pre_tokenization preprocessing as optional
  
 ##### This project is under MIT Licence
  
 "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code."
 
-Permissions:
+Summary of MIT Licence (see on MIT Website for details)
 
+**Permissions**:
 - Commercial use
 - Modification
 - Distribution
 - Private use
 
-Limitations:
+**Limitations**:
 - Liability
 - Warranty
