@@ -1,6 +1,6 @@
 # SecondProject
 
-## Second Udacity Project (unfinished)
+## Second Udacity Project
 
 This project is about building a **Machine Learning Pipeline**. The objective of this Pipeline is to automatically classify short messages (as Tweeter), in 36 different predefined categories (labels) for **Disaster Report**. This is the second part of **Udacity Data Science** nanodegree.
 
@@ -10,29 +10,132 @@ This project is about building a **Machine Learning Pipeline**. The objective of
 
 The project is divided in two main parts. And the files involded are listed below.
 
-`udacourse2.py` → python 3 code, as a library of useful functions for both parts
+`udacourse2.py` → Python 3 code, as a library of useful functions for both parts of the project
 
-The **first** one, is an ETL (Extract, Transform, Load) for taking a .csv file, rearrange the data in classes and save the data corrected data into SQLite format, as a Database Table named Messages.
+### The **first** part
 
-`messages.csv` → file containing the raw data to be processed
+Is an **ETL** (Extract, Transform, Load) for taking a .csv file, rearrange the data in classes and save the data corrected data into SQLite format, as a Database Table named Messages.
 
-`process_data.py` → Python 3 code, with whe ETL functions
+`messages.csv` → file containing the raw data to be processed (input: later it will be converted in our X-data, messages for training) 
 
-`ETL Pipeline Preparation.ipynb` → Jupyter Notebook containing all the steps for building the ETL
+`catefories.csv`→ file containing the raw data for labels to be processed (input: later it will be converted into our y-categories, labels for classification)
+
+`process_data.py` → full functional Python 3 code, containing main() caller and the ETL functions
+
+`Messages.db` → SQLite file containing the processed data for feeding the Machine Learning Classifier (output)
+
+#### additional files
+
+`ETL Pipeline Preparation.ipynb` → Jupyter Notebook containing all the steps for building the ETL (documentation for the steps made to create this first ETL)
 
 `ETL Pipeline Testing.ipynb` → Jupyter Notebook for calling and testing `process_data.py` functions
 
-The **second** part is a Machine Learning Pipeline for reading the data on SQLlite format, preprocess it, tokenize, prepare the data and train a Machine Learning Classifier. 
+### The **second** part
 
-`Messages.db` → file containing the preprocessed data for Machine Learning training
+Is a **Machine Learning Pipeline** for reading the data on SQLlite format, preprocess it, tokenize, prepare the data and train a Machine Learning Classifier. 
 
-`train_classifier.py` → Python 3 code, with the Train Classifief functions
+`Messages.db` → SQLite file containing the preprocessed data for Machine Learning training (input)
+
+`train_classifier.py` → full functional Python 3 code, with the Train Classifief functions
+
+#### additional files 
 
 `ML Pipeline Preparation.ipynb` → Jupyter Notebook documenting all the steps for building the Machine Learning Pipeline
 
 `ML Pipeline Condensing.ipynb` → Jupyter Notebook for condensation of all the steps from `ML Pipeline Preparation.ipynb`, in order to turn it into useful functions
 
 `ML Pipeline Testing.ipynb` → Jupyter Notebook for calling and testing `train_classifier.py` functions
+
+---
+
+### How to use:
+
+The main files are `process_data.py` and `train_classifier.py`. The idea is to run both of the files using a Python terminal (you can use Anaconda Terminal to run them), giving the instructions to process the data, save it in a SQLite database, read it, train a Machine Learning Classifier and savig it as a Picke file. 
+
+The original projec have the following structure (you can find it at Udacity Data Science Course at the [link](https://classroom.udacity.com/nanodegrees/nd025/parts/ba5d2f25-63d2-4db8-afb1-7a37dd792b4a/modules/1112326c-bdb1-4119-b907-4098a0e4277d/lessons/743ff0a6-7500-4de6-8477-ea822eeda8b8/concepts/6f0d69e6-1f5e-413e-8176-6b80a9bc8ad3) - perhaps you need autorization to access this area
+
+- app
+| - template
+| |- master.html  # main page of web app
+| |- go.html  # classification result page of web app
+|- run.py  # Flask file that runs app
+
+- data
+|- disaster_categories.csv  # data to process (equivalent to categories.csv)
+|- disaster_messages.csv  # data to process (equivalent to messages.csv)
+|- process_data.py (our ETL pipeline)
+|- udacourse2.py (supporting library)
+|- InsertDatabaseName.db   # database to save clean data to (equivalent to Messages.db)
+
+- models
+|- train_classifier.py (our Classifier pipeline) 
+|- udacourse2.py (supporting library)
+|- classifier.pkl  # saved model (equivalent to model.pkl)
+
+- README.md (our README file)
+
+### How it works:
+
+**First**, you need to run `process_data.py` with the correct parameters in a Terminal:
+
+>- it will take `disaster_categories.csv` and `disaster_messages.csv`(the data on these files can be changed later, but you need to keep the same structure!)
+>- it will process it and save in a table in `InsertDatabaseName.db` for later use
+
+**Second**, you will ned to run `train_classifier.py` with the correct parameters in a Terminal:
+
+>- it will take the saved data in `InsertDatabaseName.db`
+>- it will create a Machine Learning Pipeline for it, train it an save it on a Picle file `classifier.pkl`
+
+*Observe that the names of these files are only **illustrative**, as you can change them using your function call*
+
+Later a Flask application will take the trained Classifier and will open a HTML window. In this window you can insert a new Teeeter-type message (short text message) and the system will try to classify it in the pre-trained labels.
+
+### How to call the main functions
+
+There are some default values for each function. So if you call
+
+`>>>python process_data.py` → it will be equivalent to call `>>python process_data.py messages.csv categories.csv sqlite:///Messages.db`
+
+These three basic parameters are:
+
+>- messages.csv - filepath for your **messages** training data file
+>- categories.csv - filepath for your **categories** labels file
+>- ...Messages.db - filepath for your **SQLite** database file
+
+There are some **extra** parameters for `process_data.py`. For using them you will need to make a full-calling (the name of the function + the path for the extra functions calling). You can call more than one of them. Te full documentation about what they do is inside the funcions on the library. The basic parameters are:
+
+`-v` → verbose - if you want verbosity (default=False)
+`-m` → messages_index - if you want to alter (default='id')
+`-c` → categories_index - if you want to alter (default='id')
+`-s` → cat_sepparation - if you want to alter (default=';')
+`-a` → add_report - if you want adittional later report (default=False)
+
+Examples of use:
+
+`>>>python process_data msgs.csv resp.db -m=ID -c=index -s=; -v -a`
+
+`>>>python process_data.py messages.csv disaster_categories.csv DisasterResponse.db -v`
+
+
+`>>>python train_classifier.py` → it will be equivalent to call `>>>python train_classiifer.py sqlite:///Messages.db classifier.pkl`
+
+There are some **extra** parameters for `train_classifier.py` too. For using them you will need to make a full-calling (the name of the function + the path for the 
+
+`-v` → verbose - if you want some verbosity during the running (default=False)
+`-g` → perform Grid Search over Adaboost before training for the best parameters. Please use it wisely, as it costs a lot of processing time!
+`-r` → remove columns - if you want to remove (un)trainable columns from your y-labels dataset (default=False)
+`-t` → test size for splitting your data (default=0.25)
+`-s` → change Classifier from Adaboost (tree-type) to LSVM (support vector machine-type)
+`-C` → C parameter for your Classificer (default=2.0)
+`-a` → run metrics over ALL labels (not recommended, default=False) - run metris over the 10 main labels only
+`-p` → pre_tokenize - keep preprocessing tokenization column, for saving processing time. Obsservation: keeping this column turns the system faster, but may cause instability on Classifier training on Flask due to "pipeline leakage" (not recomended) (default=False) 
+
+Examples of use:
+
+`>>>python train_classifier data.db other.pkl -C=0.5 -t=0.2 -r -v`
+
+`>>>python train_classiifer.py sqlite:///Messages.db classifier.pkl -v`
+
 
 ---
 
