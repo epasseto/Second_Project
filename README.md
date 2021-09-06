@@ -16,9 +16,9 @@ The project is divided in two main parts. And the files involded are listed belo
 
 Is an **ETL** (Extract, Transform, Load) for taking a .csv file, rearrange the data in classes and save the data corrected data into SQLite format, as a Database Table named Messages.
 
-`messages.csv` → file containing the raw data to be processed (input: later it will be converted in our X-data, messages for training) 
+`disaster_messages.csv` → file containing the raw data to be processed (input: later it will be converted in our X-data, messages for training) 
 
-`catefories.csv`→ file containing the raw data for labels to be processed (input: later it will be converted into our y-categories, labels for classification)
+`disaster_categories.csv`→ file containing the raw data for labels to be processed (input: later it will be converted into our y-categories, labels for classification)
 
 `process_data.py` → full functional Python 3 code, containing main() caller and the ETL functions
 
@@ -29,6 +29,12 @@ Is an **ETL** (Extract, Transform, Load) for taking a .csv file, rearrange the d
 `ETL Pipeline Preparation.ipynb` → Jupyter Notebook containing all the steps for building the ETL (documentation for the steps made to create this first ETL)
 
 `ETL Pipeline Testing.ipynb` → Jupyter Notebook for calling and testing `process_data.py` functions
+
+### additional data sources
+
+`messages.csv` → file containing the original raw data to be processed (input: later it will be converted in our X-data, messages for training) 
+
+`categories.csv`→ file containing the original raw data for labels to be processed (input: later it will be converted into our y-categories, labels for classification)
 
 ### The **second** part
 
