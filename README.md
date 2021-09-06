@@ -64,7 +64,7 @@ The original projec have the following structure (you can find it at Udacity Dat
 >>- disaster_messages.csv  ← data to process (equivalent to messages.csv)
 >>- process_data.py (our ETL pipeline)
 >>- udacourse2.py (supporting library)
->>- InsertDatabaseName.db   ← database to save clean data to (equivalent to Messages.db)
+>>- Disaster.db   ← database to save clean data to (equivalent to Messages.db)
 >- models
 >>- train_classifier.py (our Classifier pipeline) 
 >>- udacourse2.py (supporting library)
