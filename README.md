@@ -94,7 +94,7 @@ Call example for Udacity environment:
 **Second**, you will ned to run `train_classifier.py` with the correct parameters in a Terminal:
 
 >- it will take the saved data in `InsertDatabaseName.db`
->- it will create a Machine Learning Pipeline for it, train it an save it on a Picle file `classifier.pkl` ← 
+>- it will create a Machine Learning Pipeline for it, train it an save it on a Picle file `classifier.pkl` 
 
 Call example for Udacity environment:
 
