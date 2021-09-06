@@ -85,10 +85,22 @@ The original projec have the following structure (you can find it at Udacity Dat
 >- it will take `disaster_categories.csv` and `disaster_messages.csv`(the data on these files can be changed later, but you need to keep the same structure!)
 >- it will process it and save in a table in `InsertDatabaseName.db` for later use
 
+Call example for Udacity environment:
+
+- on /home/workspace/data
+
+- call `python process_data.py disaster_messages.csv disaster_categories.csv sqlite:///Messages.db` ← `-v` for verbosity on processing
+
 **Second**, you will ned to run `train_classifier.py` with the correct parameters in a Terminal:
 
 >- it will take the saved data in `InsertDatabaseName.db`
->- it will create a Machine Learning Pipeline for it, train it an save it on a Picle file `classifier.pkl`
+>- it will create a Machine Learning Pipeline for it, train it an save it on a Picle file `classifier.pkl` ← 
+
+Call example for Udacity environment:
+
+- on /home/worskpace/models
+
+- call `python train_classifier.py sqlite:////home/workspace/data/Messages.db classifier.pkl -v -g` ← `-g` for perform Grid Search, `-v` for verbosity on processing
 
 *Observe that the names of these files are only **illustrative**, as you can change them using your function call*
 
