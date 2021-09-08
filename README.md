@@ -120,11 +120,11 @@ These three basic parameters are:
 
 There are some **extra** parameters for `process_data.py`. For using them you will need to make a full-calling (the name of the function + the path for the extra functions calling). You can call more than one of them. Te full documentation about what they do is inside the funcions on the library. The basic parameters are:
 
+`-a` → add_report - if you want adittional later report (default=False)
+`-c` → categories_index - if you want to alter (default='id')
 `-v` → verbose - if you want verbosity (default=False)
 `-m` → messages_index - if you want to alter (default='id')
-`-c` → categories_index - if you want to alter (default='id')
 `-s` → cat_sepparation - if you want to alter (default=';')
-`-a` → add_report - if you want adittional later report (default=False)
 
 Examples of use:
 
@@ -137,21 +137,23 @@ Examples of use:
 
 There are some **extra** parameters for `train_classifier.py` too. For using them you will need to make a full-calling (the name of the function + the path for the 
 
-`-v` → verbose - if you want some verbosity during the running (default=False)
-`-g` → perform Grid Search over Adaboost before training for the best parameters. Please use it wisely, as it costs a lot of processing time!
-`-r` → remove columns - if you want to remove (un)trainable columns from your y-labels dataset (default=False)
-`-t` → test size for splitting your data (default=0.25)
-`-s` → change Classifier from Adaboost (tree-type) to LSVM (support vector machine-type)
-`-C` → C parameter for your Classificer (default=2.0)
 `-a` → run metrics over ALL labels (not recommended, default=False) - run metris over the 10 main labels only
+`-c` → C parameter for your Classificer (default=2.0)
+`-e` → NOT remove duplicates (condense) tokens on a document. Sometimes it turns easier for the Classifier to fit best parameters, others not (default=True - remove duplicates)
+`-g` → perform Grid Search over Adaboost before training for the best parameters. Please use it wisely, as it costs a lot of processing time!
+`-l` → learning rate for Adaboost Classifier. It have a tradeoff with n_estimators, so consider to tune both parameters (default=0.5)
+`-n` → number of maximum estimators for Adaboost (default=80)
 `-p` → pre_tokenize - keep preprocessing tokenization column, for saving processing time. Obsservation: keeping this column turns the system faster, but may cause instability on Classifier training on Flask due to "pipeline leakage" (not recomended) (default=False) 
+`-r` → remove columns - if you want to remove (un)trainable columns from your y-labels dataset (default=False)
+`-s` → change Classifier from Adaboost (tree-type) to LSVM (support vector machine-type)
+`-t` → test size for splitting your data (default=0.25)
+`-v` → verbose - if you want some verbosity during the running (default=False)
 
 Examples of use:
 
 `>>>python train_classifier data.db other.pkl -C=0.5 -t=0.2 -r -v`
 
 `>>>python train_classiifer.py sqlite:///Messages.db classifier.pkl -v`
-
 
 ---
 
