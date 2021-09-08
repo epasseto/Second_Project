@@ -324,13 +324,17 @@ format(dataset.shape[0]))
 
 #########1#########2#########3#########4#########5#########6#########7#########8
 def fn_labels_report(dataset, 
-                     max_c=False, 
+                     max_c=False,
+                     data_ret=False,
+                     label_filter=False,
                      verbose=False):
     '''This is a report only function!
     Inputs:
       - dataset (mandatory) - the target dataset for reporting about
-      - max_c (optional) - maximum counting - if you want to count for all elements,
-        set it as False - (default=False)
+      - max_c (optional) - maximum counting - if you want to count for all 
+        elements, set it as False (default=False)
+      - data_ret (optional) - if you want to return a Pandas Dataframe with
+        the results (default=False)
       - verbose (optional) - if you want some verbosity (default=False)
     Output:
       - no output, shows reports about the labels counting
@@ -352,7 +356,23 @@ def fn_labels_report(dataset,
     infrastructure_lst = ['buildings', 'transport', 'hospitals', 'electricity', 
                           'shops', 'other_infrastructure']
     
-    expand_list = expand_lst + aid_lst + weather_lst + infrastructure_lst
+    if not label_filter: #all the labels
+        expand_list = expand_lst + aid_lst + weather_lst + infrastructure_lst
+    elif label_filter == 'main':
+        expand_list = ['related', 'request', 'offer', 'direct_report']
+    elif label_filter == 'related':
+        expand_list = ['aid_related', 'infrastructure_related', 'weather_related']
+    elif label_filter == 'expand':
+        expand_list = expand_lst
+    elif label_filter == 'aid':
+        expand_list = aid_lst
+    elif label_filter == 'weather':
+        expand_list = weather_lst
+    elif label_filter == "infra":
+        expand_list = infrastructure_lst
+    else:
+        raise Exception('invalid label_list parameter')
+    
     total = dataset.shape[0]
     counts = []
 
@@ -369,10 +389,14 @@ def fn_labels_report(dataset,
 
     i=1
     c=2
+    
+    tuples_lst=[]
 
     for cat in sorted_tuples:
         count, field, percent = cat
         print('{}-{}:{} ({:.1f}%)'.format(i, field, count, percent))
+        tuples_lst.append((field, count, percent))
+
         if max_c:
             if c > max_c:
                 break
@@ -382,6 +406,11 @@ def fn_labels_report(dataset,
     end = time()
     if verbose:
         print('elapsed time: {}s'.format(end-begin))
+        
+    df_report = pd.DataFrame(tuples_lst, columns = ['label', 'count', 'percentage'])
+        
+    if data_ret:
+        return df_report
         
 #########1#########2#########3#########4#########5#########6#########7#########8
 def fn_read_data(filepath, 
@@ -707,14 +736,14 @@ format(first_step, second_step, optional_step2))
 
 #########1#########2#########3#########4#########5#########6#########7#########8
 def fn_tokenize_fast(msg_text,
-                     condense=False,
+                     condense=True,
                      verbose=False):
     """This is the fast version for word tokenizer. It makes only one loop for 
     all the selected as best functions
     Inputs:
       - msg_text - string (mandatory) - a text string (not too long), as a 
         Tweeter message
-      - condense - elliminate duplicated tokens from each document (default=False)
+      - condense - elliminate duplicated tokens from each document (default=True)
       - verbose - boolean (optional) - if you need some verbosity, turn it on 
         (default=False) 
     Output:
@@ -786,18 +815,21 @@ def fn_tokenize_fast(msg_text,
     return cleared
 
 #########1#########2#########3#########4#########5#########6#########7#########8
-def fn_valids_report(dataset, 
+def fn_valids_report(dataset,
+                     data_ret=False,
                      verbose=False):
     '''This is a report function! It calls the Count Valids function for each
     label of a dataset, and shows a report about it.
     Input:
       - dataset for valid items report (in percentage)
+      - data_ret - returns report as a dataset (default=False)
       - verbose (optional) - if you want some verbosity (default=False)
     Output:
       - none
     '''
     print('###function valids_report started')
     begin = time()
+    tuples_lst = []
     total = dataset.shape[0]
     field = 'if_blank'
     count = fn_count_valids(dataset=dataset, 
@@ -805,16 +837,23 @@ def fn_valids_report(dataset,
                             criteria=True)
     percent = 100. * (count / total)
     print('  *{}:{} ({:.1f}%)'.format(field, count, percent))
+    tuples_lst.append((field, count, percent))
     
     spent = time() - begin
     if verbose:
         print('process time:{:.4f} seconds'.format(spent))
+        
+    df_report = pd.DataFrame(tuples_lst, columns = ['label', 'count', 'percentage'])
+        
+    if data_ret:
+        return df_report
                 
 #########1#########2#########3#########4#########5#########6#########7#########8
 def fn_scores_report2(y_test, 
                       y_pred,
                       best_10=False,
                       average='binary',
+                      data_ret=False,
                       verbose=False):
     '''This function tests the model, giving a report for each label in y.
     It shows metrics, for reliable trained labels
@@ -931,8 +970,9 @@ def fn_scores_report2(y_test,
     spent = time() - begin
     if verbose:
         print('process time:{:.4f} seconds'.format(spent))
-        
-    return (accuracy, precision, recall)
+    
+    if data_ret:
+        return (accuracy, precision, recall)
 
 
 #########1#########2#########3#########4#########5#########6#########7#########8

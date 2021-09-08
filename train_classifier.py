@@ -40,6 +40,7 @@ def dummy(doc):
 def load_data(data_file='sqlite:///Messages.db',
               remove_cols=False,
               pre_tokenize=False,
+              condense=True,
               verbose=False):
     '''This function takes a path for a MySQL table and returns processed data
     for training a Machine Learning Classifier
@@ -53,6 +54,8 @@ def load_data(data_file='sqlite:///Messages.db',
         Obsservation: keeping this column turns the system faster, but it can
         cause instability on Classifier training on Flask due to "pipeline
         leakage" (default=False)
+      - condense (optional) - if you want to remove duplicate tokens under
+        one document (default=True)
         See: https://rebeccabilbro.github.io/module-main-has-no-attribute/
       - verbose (optional) - if you want some verbosity during the running 
         (default=False)
@@ -101,7 +104,9 @@ format(df[df['if_blank'] == 1].shape[0]))
     df.insert(1, 'tokenized', np.nan)
 
     #tokenizing over the provisory
-    df['tokenized'] = df.apply(lambda x: udacourse2.fn_tokenize_fast(x['message']), axis=1)
+    df['tokenized'] = df.apply(lambda x: udacourse2.fn_tokenize_fast(x['message'], 
+                                                                     condense=condense), 
+                               axis=1)
     
     #removing NaN over provisory (if istill exist)
     df = df[df['tokenized'].notnull()]
@@ -218,33 +223,44 @@ format(df[df['if_blank'] == 1].shape[0]))
     return X, y
 
 #########1#########2#########3#########4#########5#########6#########7#########8
-def build_model(tree_type=True,
+def build_model(data_file='sqlite:///Messages.db',
+                tree_type=True,
                 C=2.0,
+                learning_rate=0.5,
+                n_estimators=80,
                 remove_cols=False,
                 grid_search=False,
                 pre_tokenize=False,
+                condense=True,
                 test_size=0.25,
-                data_file='sqlite:///Messages.db',
                 verbose=False):
     '''This function builds the Classifier Pipeline, for future fitting
     Inputs:
+      - data_file (optional) - full path for the source SQLite file
+        (default='sqlite:///Messages.db')
       - tree-type (optional) - Classifier will be from Tree-family (Adaboost)
         if you want to use the alternative Classifier (LSVM), set it as False.
         Default: True
-      - C (optional) - C parameter for the LinearSVC Classifier (default=2.)
+      - C (optional) - C parameter for the LinearSVC Classifier (default=2.0)
+      - learning_rate (optional) - parameter for the Adaboost Classifier
+        (default=0.5)
+      - n_estimators (optional) - parameter for the Adaboost Classifier
+        (default=80)      
+      - remove_cols: ONLY used for Grid Search! (default=False)
+      - grid_search (optional) performas Grid Search over Adaboost before 
+        training for the best parameters. Please use it wisely, as it costs 
+        a lot of processing time! (default=False)
+        Observation: Grid Search was not implemented on this code for the 
+        alternative Classifier (LSVM), so this parameter will not work when 
+        using (tree_type=False)
       - pre_tokenize (optional) - if you want to keep preprocessing tokenization
         column, thaw was made for removal of empty-messages from X-training.
         Obsservation: keeping this column turns the system faster, but it can
         cause instability on Classifier training on Flask due to "pipeline
         leakage" (default=False)
         See: https://rebeccabilbro.github.io/module-main-has-no-attribute/
-      - grid_search (optional) performas Grid Search over Adaboost before 
-        training for the best parameters. Please use it wisely, as it costs 
-        a lot of processing time! (default=False)
-        Observation: Grid Search was not implemented on this code for the 
-        alternative Classifier (LSVM), so this parameter will not work when 
-        using tree_type=False
-      - remove_cols: ONLY used for Grid Search! (default=False)
+      - condense (optional) - if you want to remove duplicate tokens under
+        one document (default=True) note: not activated due to technical issues
       - test_size: ONLY used for Grid Sarch! (default=0.25)
       - verbose (optional) - if you want some verbosity during the running 
         (default=False)
@@ -257,8 +273,6 @@ def build_model(tree_type=True,
     if verbose:
         print('###build_model function started')
     start = time()
-    learning_rate = 1.0
-    n_estimators = 50
     
     #0.grid search for Adaboost Classifier
     if grid_search:
@@ -283,6 +297,7 @@ def build_model(tree_type=True,
         X, y = load_data(data_file=data_file,
                          remove_cols=remove_cols,
                          pre_tokenize=pre_tokenize,
+                         condense=condense,
                          verbose=verbose)
 
         X_train, X_test, y_train, y_test = train_test_split(X, 
@@ -335,7 +350,7 @@ def build_model(tree_type=True,
     else: #alternative LSVM Classifier
         if verbose:
             print('Support Vector Machine (Linear-alternative) pipeline is on the way')
-            print('*note: parameter C, is used in this family of Classifiers')
+            print('*note: parameters learning_rate and n_estimators are NOT used in this family of Classifiers')
             
         if pre_tokenize:
             if verbose:
@@ -420,11 +435,13 @@ def train(X,
         metrics = udacourse2.fn_scores_report2(y_test, 
                                                y_pred,
                                                best_10=best_10,
+                                               data_ret=True,
                                                verbose=True)
     else:
         metrics = udacourse2.fn_scores_report2(y_test, 
                                                y_pred,
                                                best_10=best_10,
+                                               data_ret=True,
                                                verbose=False)
     for metric in metrics:
         if metric < 0.6:
@@ -449,7 +466,7 @@ def export_model(model,
          'classifier.pkl')
       - verbose (optional) - if you want some verbosity during the running 
         (default=False)
-       Output: return True if everything runs OK
+      Output: return True if everything runs OK
       ''' 
     if verbose:
         print('###export_model function started')
@@ -475,26 +492,33 @@ def export_model(model,
 
 #########1#########2#########3#########4#########5#########6#########7#########8
 def run_pipeline(data_file='sqlite:///Messages.db',
-                 classifier='classifier.pkl',
+                 file_name='classifier.pkl',
                  remove_cols=False,
                  tree_type=True,
-                 C=2.,
-                 test_size=.25,
+                 C=2.0,
+                 learning_rate=0.5,
+                 n_estimators=80,
+                 test_size=0.25,
                  best_10=True,
                  pre_tokenize=False,
+                 condense=True,
                  grid_search=False,
                  verbose=False):
     '''This function is a caller: it calls load, build, train and save modules
     Inputs:
       - data_file (optional) - complete path to the SQLite datafile to be 
         processed (default=''sqlite:///Messages.db')
-      - classifier - name for pickling the Classifier (default='classifier.pkl')
+      - file_name - name for pickling the Classifier (default='classifier.pkl')
       - remove_cols (optional) - if you want to remove (un)trainable labels
         columns (default=False)
       - tree-type (optional) - Classifier will be from Tree-family (Adaboost)
         if you want to use the alternative Classifier (LSVM), set it as False.
         Default: True
-      - C (optional) - C parameter for the LinearSVC Classifier (default=2.)
+      - C (optional) - parameter for the LinearSVC Classifier (default=2.0)
+      - learning_rate (optional) - parameter for the Adaboost Classifier
+        (default=0.5)
+      - n_estimators (optional) - parameter for the Adaboost Classifier
+        (default=80)
       - test_size (optional) - test size for data split (default=0.25)
       - best_10 (optional) - if metrics will be best_10 or all 
         (default=True - best_10)        
@@ -503,6 +527,8 @@ def run_pipeline(data_file='sqlite:///Messages.db',
         Obsservation: keeping this column turns the system faster, but it can
         cause instability on Classifier training on Flask due to "pipeline
         leakage" (default=False)
+      - condense (optional) - if you want to remove duplicate tokens under
+        one document (default=True)
         See: https://rebeccabilbro.github.io/module-main-has-no-attribute/
       - grid_search (optional) performas Grid Search over Adaboost before 
         training for the best parameters. Please use it wisely, as it costs 
@@ -520,22 +546,36 @@ def run_pipeline(data_file='sqlite:///Messages.db',
 
     #1.Run ETL pipeline
     X, y = load_data(data_file,
-                     remove_cols=False,
+                     remove_cols=remove_cols,
+                     pre_tokenize=pre_tokenize,
+                     condense=condense,
                      verbose=verbose)
+                                       
     #2.Build model pipeline
     if grid_search: #takes additional parameters for run
         model = build_model(C=C,
+                            learning_rate=learning_rate,
+                            n_estimators=n_estimators,
                             tree_type=tree_type,
                             pre_tokenize=pre_tokenize,
-                            grid_search=grid_search,
+                            remove_cols=remove_cols,
+                            condense=condense,
+                            grid_search=True,
                             test_size=test_size,
                             data_file=data_file,
                             verbose=verbose)
+                                       
     else: #takes standard parameters only
         model = build_model(C=C,
+                            learning_rate=learning_rate,
+                            n_estimators=n_estimators,
                             tree_type=tree_type,
                             pre_tokenize=pre_tokenize,
-                            grid_search=grid_search,
+                            remove_cols=remove_cols,
+                            condense=condense,
+                            test_size=test_size,
+                            grid_search=False,
+                            daa_file=data_file,
                             verbose=verbose)
 
     #3.Train model pipeline
@@ -545,8 +585,10 @@ def run_pipeline(data_file='sqlite:///Messages.db',
                   test_size=test_size,
                   best_10=best_10,
                   verbose=verbose)
+                                                                              
     # save the model
     export_model(model,
+                 file_name=file_name,
                  verbose=verbose)
     
     spent = time() - start
@@ -556,13 +598,16 @@ def run_pipeline(data_file='sqlite:///Messages.db',
 
 #########1#########2#########3#########4#########5#########6#########7#########8
 def main(data_file = 'sqlite:///Messages.db',
-         classifier = 'classifier.pkl',
+         file_name = 'classifier.pkl',
          remove_cols = False,
          tree_type = True,
          C = 2.0,
+         learning_rate = 0.5,
+         n_estimators = 80,
          test_size = 0.25,
          best_10 = True,
          pre_tokenize = False,
+         condense = True,
          grid_search = False,
          verbose = False):
     '''This is the main Machine Learning Pipeline function. It calls the other 
@@ -572,42 +617,51 @@ def main(data_file = 'sqlite:///Messages.db',
       - data_file - just indicate the complete path after the command 
         (default:'../data/DisasterResponse.db')
         Example: python train_classifier.py ../data/Database.db
-      - classifier - you need to indicate both data_file and classifier
+      - file_name - you need to indicate both data_file and file_name
         (default:'classifier.pkl')
         Example: python train_classifier.py ../data/Database.db other.pkl
     Extra parameters:
       here you need to indicate both data_file and classifier, in order to use 
       them you can use only one, or more, in any order
-      -v -> verbose - if you want some verbosity during the running
-            (default=False)
-      -r -> remove columns - if you want to remove (un)trainable columns from
-            your y-labels dataset (default=False)
-      -t -> test size for splitting your data (default=0.25)
-      -s -> change Classifier from Adaboost (tree-type) to LSVM 
-            (support vector machine-type)
-      -C -> C parameter for your Classificer (default=2.0)
       -a -> run metrics over ALL labels (not recommended!) 
             default=False - run metris over the 10 main labels only
+      -c -> C parameter for your Classificer (default=2.0)
+      -e -> NOT remove duplicates (condense) tokens on a document. Sometimes it 
+            turns easier for the Classifier to fit best parameters, others not 
+            (default=True - remove duplicates)
+      -g -> perform Grid Search over Adaboost before training for the best
+            parameters. Please use it wisely, as it costs a lot of processing
+            time!
+      -l -> learning rate for Adaboost Classifier. It have a tradeoff with
+            n_estimators, so consider to tune both parameters (default=0.5)
+      -n -> number of maximum estimators for Adaboost (default=80)
       -p -> pre_tokenize - keep preprocessing tokenization column, for saving
             processing time. Obsservation: keeping this column turns the system 
             faster, but may cause instability on Classifier training on Flask
             due to "pipeline leakage" (not recomended) (default=False)  
-      -g -> perform Grid Search over Adaboost before training for the best
-            parameters. Please use it wisely, as it costs a lot of processing
-            time!
-      Example: python train_classifier data.db other.pkl -C=0.5 -t=0.2 -r -v
+      -r -> remove columns - if you want to remove (un)trainable columns from
+            your y-labels dataset (default=False)
+      -s -> change Classifier from Adaboost (tree-type) to LSVM 
+            (support vector machine-type)
+      -t -> test size for splitting your data (default=0.25)
+      -v -> verbose - if you want some verbosity during the running
+            (default=False)
+      Example: python train_classifier data.db other.pkl -c=0.5 -t=0.2 -r -v
     '''
     run_pipeline(data_file=data_file,
-                 classifier=classifier,
+                 file_name=file_name,
                  remove_cols=remove_cols,
                  tree_type=tree_type,
-                 C=C, 
+                 C=C,
+                 learning_rate=learning_rate,
+                 n_estimators=n_estimators,
                  test_size=test_size,
                  best_10=best_10,
                  pre_tokenize=pre_tokenize,
+                 condense=condense,
                  grid_search=grid_search,
                  verbose=verbose)
-    
+                                           
 #########1#########2#########3#########4#########5#########6#########7#########8              
 if __name__ == '__main__':
 
@@ -627,41 +681,52 @@ if __name__ == '__main__':
         remove_cols = False
         tree_type = True
         C = 2.0
+        learning_rate = 0.5
+        n_estimators = 80
         test_size = 0.25
         best_10 = True
         pre_tokenize=False
         grid_search=False
         verbose = False
-        
+                                                                         
         remain_args = args[2:] #elliminate the two main arg 
         for arg in remain_args:
             comm = arg[:2] #get the command part
-            if comm == '-r':
+            if comm == '-a':
+                best_10 = False
+            elif comm == '-c':
+                C = arg[3:]
+            elif comm == '-e':
+                condense = False
+            elif comm == '-g':
+                grid_search = True
+            elif comm == '-l':
+                learning_rate = arg[3:]
+            elif comm == '-n':
+                n_estimators = arg[3:]
+            elif comm == '-p':
+                pre_tokenize=True
+            elif comm == '-r':
                 remove_cols = True
             elif comm == '-s':
                 tree_type = False
-            elif comm == '-C':
-                C = arg[3:]
             elif comm == '-t':
                 test_size = arg[3:]
-            elif comm == '-a':
-                best_10 = False
-            elif comm == '-p':
-                pre_tokenize=True
-            elif comm == '-g':
-                grid_search = True
             elif comm == '-v':
                 verbose = True
             else:
                 raise Exception('invalid argument')
                 
-        main(data_file=args[0], #full calling
-             classifier=args[1],
+        main(data_file=args[0],
+             file_name=args[1],
              remove_cols=remove_cols,
              tree_type=tree_type,
-             C=C, 
+             C=C,
+             learning_rate=learning_rate,
+             n_estimators=n_estimators,
              test_size=test_size,
              best_10=best_10,
              pre_tokenize=pre_tokenize,
+             condense=condense,
              grid_search=grid_search,
              verbose=verbose)
