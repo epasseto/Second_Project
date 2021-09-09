@@ -240,6 +240,8 @@ Versions:
 - 1.20b update: after running GridSearch on Adaboost, I could make some parameters testing
 
 - 1.21 update: for preventing pipeline leakage using Picke, I modified train_data for having pre_tokenization preprocessing as optional
+
+- 1.22 update: `condensing` bug correction. This attribute was causing some instability in the system. In a new future it will be active again. It is not fundamental for running the project
  
 ##### This project is under MIT Licence
  
