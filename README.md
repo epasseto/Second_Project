@@ -129,9 +129,13 @@ These three basic parameters are:
 There are some **extra** parameters for `process_data.py`. For using them you will need to make a full-calling (the name of the function + the path for the extra functions calling). You can call more than one of them. Te full documentation about what they do is inside the funcions on the library. The basic parameters are:
 
 `-a` → add_report - if you want adittional later report (default=False)
+
 `-c` → categories_index - if you want to alter (default='id')
+
 `-v` → verbose - if you want verbosity (default=False)
+
 `-m` → messages_index - if you want to alter (default='id')
+
 `-s` → cat_sepparation - if you want to alter (default=';')
 
 Examples of use:
@@ -146,15 +150,25 @@ Examples of use:
 There are some **extra** parameters for `train_classifier.py` too. For using them you will need to make a full-calling (the name of the function + the path for the 
 
 `-a` → run metrics over ALL labels (not recommended, default=False) - run metris over the 10 main labels only
+
 `-c` → C parameter for your Classificer (default=2.0)
+
 `-e` → NOT remove duplicates (condense) tokens on a document. Sometimes it turns easier for the Classifier to fit best parameters, others not (default=True - remove duplicates)
+
 `-g` → perform Grid Search over Adaboost before training for the best parameters. Please use it wisely, as it costs a lot of processing time!
+
 `-l` → learning rate for Adaboost Classifier. It have a tradeoff with n_estimators, so consider to tune both parameters (default=0.5)
+
 `-n` → number of maximum estimators for Adaboost (default=80)
+
 `-p` → pre_tokenize - keep preprocessing tokenization column, for saving processing time. Obsservation: keeping this column turns the system faster, but may cause instability on Classifier training on Flask due to "pipeline leakage" (not recomended) (default=False) 
+
 `-r` → remove columns - if you want to remove (un)trainable columns from your y-labels dataset (default=False)
+
 `-s` → change Classifier from Adaboost (tree-type) to LSVM (support vector machine-type)
+
 `-t` → test size for splitting your data (default=0.25)
+
 `-v` → verbose - if you want some verbosity during the running (default=False)
 
 Examples of use:
@@ -202,14 +216,20 @@ Versions:
 - 1.15 update: improved my customized function for other metrics
 
 - 1.16 improvement: trying to create new fancy metrics for scoring my Classifiers
-- 1.16 update: new fn_scores_report2 function created
+
+
+- 1.16b update: new fn_scores_report2 function created
 
 - 1.17 update: metrics changed, so my choice may change too!
+
 - 1.17b update: for Naïve Bayes updated new, more realistic metrics based on 10-top labels
+
 - 1.17c update: for Linear Support Vector updated new, more realistic metrics based on 10-top labels
+
 - 1.17d update: for k-Nearest updated new, more realistic metrics based on 10-top labels
 
 - 1.18 update: letting the tokenizer take the same word more than once:
+
 - 1.18b update: for Naïve Bayes letting the tokenizer take the same word more than once
 - 1.18c update: for Linear Support Vector Machine letting the tokenizer take the same word more than once
 - 1.18d update: now my Classifier was changed to Linear SVC. The explanations for my choice rests above
