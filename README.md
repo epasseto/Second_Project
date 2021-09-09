@@ -52,6 +52,14 @@ Is a **Machine Learning Pipeline** for reading the data on SQLlite format, prepr
 
 `ML Pipeline Testing.ipynb` → Jupyter Notebook for calling and testing `train_classifier.py` functions
 
+#### Flask \ frontend files
+
+`run.py` → Python 3 file for running the app. A first version of this file was offered by Udacity, and was customized here. It is needed to run the file, after making the data preparation and training the Classificer with the SQLite table data, and then run this file as `python run.py`, then starting the environment with `env|grep WORK`, taking the correct address for seeing the app working
+
+`go.html` → HLML file, provided by Udacity
+
+`master.html` → HTML file, provide by Udacity
+
 ---
 
 ### How to use:
