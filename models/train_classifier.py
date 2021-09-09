@@ -104,9 +104,7 @@ format(df[df['if_blank'] == 1].shape[0]))
     df.insert(1, 'tokenized', np.nan)
 
     #tokenizing over the provisory
-    df['tokenized'] = df.apply(lambda x: udacourse2.fn_tokenize_fast(x['message'], 
-                                                                     condense=condense), 
-                               axis=1)
+    df['tokenized'] = df.apply(lambda x: udacourse2.fn_tokenize_fast(x['message']), axis=1) #condense=condense
     
     #removing NaN over provisory (if istill exist)
     df = df[df['tokenized'].notnull()]
@@ -575,7 +573,7 @@ def run_pipeline(data_file='sqlite:///Messages.db',
                             condense=condense,
                             test_size=test_size,
                             grid_search=False,
-                            daa_file=data_file,
+                            data_file=data_file,
                             verbose=verbose)
 
     #3.Train model pipeline
@@ -687,6 +685,7 @@ if __name__ == '__main__':
         best_10 = True
         pre_tokenize=False
         grid_search=False
+        condense=True
         verbose = False
                                                                          
         remain_args = args[2:] #elliminate the two main arg 
