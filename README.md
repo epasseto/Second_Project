@@ -266,3 +266,13 @@ Summary of MIT Licence (see on MIT Website for details)
 **Limitations**:
 - Liability
 - Warranty
+
+#### Terminology
+
+**Bugfix**: bugfix message
+
+**Update**: update message
+
+**Correction**: correction message
+
+**Added**: files added or whatever
