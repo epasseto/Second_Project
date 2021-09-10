@@ -248,6 +248,8 @@ Versions:
 - 1.24 update `condensing` attribute was re-inserted, but is still not functional
 
 - 1.25 update hard coding was removed for `process_data` and `train_classifier` files
+
+- 1.26 update `train_classifier` had a defective exception raising on main function call, `process_data` had a defective parameter name on main function. Corrected.
  
 ##### This project is under MIT Licence
  
