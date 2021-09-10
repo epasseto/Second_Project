@@ -153,7 +153,7 @@ There are some **extra** parameters for `train_classifier.py` too. For using the
 
 `-c` → C parameter for your Classificer (default=2.0)
 
-`-e` → NOT remove duplicates (condense) tokens on a document. Sometimes it turns easier for the Classifier to fit best parameters, others not (default=True - remove duplicates)
+`-e` → NOT remove duplicates (condense) tokens on a document. Sometimes it turns easier for the Classifier to fit best parameters, others not (default=True - remove duplicates) - not working in this project due to an issue
 
 `-g` → perform Grid Search over Adaboost before training for the best parameters. Please use it wisely, as it costs a lot of processing time!
 
@@ -242,6 +242,8 @@ Versions:
 - 1.21 update: for preventing pipeline leakage using Picke, I modified train_data for having pre_tokenization preprocessing as optional
 
 - 1.22 update: `condensing` bug correction. This attribute was causing some instability in the system. In a new future it will be active again. It is not fundamental for running the project
+
+- 1.23 update `condensing` attribute was removed, due to an insuperable issue 
  
 ##### This project is under MIT Licence
  
